@@ -1,6 +1,6 @@
 # Employee Management System
 
-This project is an Employee Management System that allows you to efficiently manage employees, departments, users, notes, and projects.
+<h4>This project is an Employee Management System that allows you to efficiently manage employees, departments, users, notes, and projects.</h4>
 
 ## Tables
 
@@ -20,10 +20,13 @@ The project contains the following tables:
 
 The project provides the following features:
 
-- Add, edit, and delete employees.
-- Add, edit, and delete departments.
+- Add, edit, update, and delete employees.
+- Add, edit, update, and delete departments.
 - Manage user accounts.
-- Add and view notes related to employees.
+- Add and view notes related to employees anddepartments.
 - Manage projects within the company.
 
 We hope this project will be useful to you!
+
+API Documentation
+- this is a link of Documentation vai Postman : https://documenter.getpostman.com/view/34410873/2sA3BuV8nh
