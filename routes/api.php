@@ -35,7 +35,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::apiResource('department', DepartmentController::class);
     Route::get('softDeletedDepartment',[DepartmentController::class,'showDeletedDepartment']);
     Route::post('restoreDepartment/{id}',[DepartmentController::class,'restoreDepatment']);
-    Route::delete('forcedeleteDepartment',[DepartmentController::class,'forceDeleteDepartment']);
+    Route::delete('forcedeleteDepartment/{id}',[DepartmentController::class,'forceDeleteDepartment']);
 
 
     /**
