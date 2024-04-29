@@ -14,7 +14,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::with('employees')->get();
         return response()->json([
             'project' => $projects,
         ], 200);
@@ -29,9 +29,10 @@ class ProjectController extends Controller
             $project = Project::create([
                 'name' => $request->name,
             ]);
-            if ($request->has('employee_ids')) {
-                $project->employees()->attach($request->employee_ids);
+            if ($request->has('employee_id')) {
+                $project->employees()->attach($request->employee_id);
             }
+            $employee = $project->employees;
             $project->save();
         } catch (\Throwable $th) {
             return response()->json([
@@ -42,6 +43,7 @@ class ProjectController extends Controller
         return response()->json([
             'message' => 'Project created successfully',
             'project' => $project,
+            'employee' => $employee,
         ], 200);
     }
 
@@ -49,10 +51,14 @@ class ProjectController extends Controller
      * Display the specified resource.
      */
     public function show(Project $project)
-    {
+    {   
+        
         if ($project) {
+            $employee =$project::with('employees');
+            
             return response()->json([
                 'project' => $project,
+                'employees' => $employee,
             ], 200);
         } else {
             return response()->json([
@@ -91,10 +97,20 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $project->delete();
+        if(!$project)
+        {
+            return response()->json([
+                'message' => 'Project not found',
+            ], 404);
+        }else
+        {
+            $project->employees()->detach();
+            $project->delete();
         return response()->json([
             'message' => 'Project deleted successfully',
             'project' => $project,
         ], 200);
+        }
+        
     }
 }

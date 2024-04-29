@@ -19,7 +19,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::all();
+        // $employees = Employee::all();
+        $employees = Employee::with('projects')->get();
         return response()->json([
             'employees' => $employees
         ],200);
@@ -39,6 +40,12 @@ class EmployeeController extends Controller
                 'position' => $request->position,
                 'department_id' => $request->department_id,
             ]);
+            if ($request->has('project_id'))
+            {
+                $employee->projects()->attach($request->project_id);
+                $project = $employee->projects;
+            }
+            
             if ($request->note)
             {
                 $employee->notes()->create([
@@ -65,12 +72,14 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {   
         $department= Department::find($employee->department_id);
+        $project = $employee->projects;
         return response()->json([
             'Employee id' => $employee->id,
             'Employee full name' => $employee->full_name,
             'Employee email' => $employee->email,
             'Employee postion' => $employee->position,
-            'Employee Department' => $department->name
+            'Employee Department' => $department->name,
+            'Employee Project' => $project
         ],200);
     }
 
@@ -85,7 +94,10 @@ class EmployeeController extends Controller
             $employee->email = $request->input('email') ?? $employee->email;
             $employee->position = $request->input('position') ?? $employee->position;
             $employee->department_id = $request->input('department_id') ?? $employee->department_id;
-
+            if ($request->has('project_id'))
+            {
+                $employee->projects()->sync($request->project_id);
+            }
             $employee->save();
         
         } catch (\Throwable $th) {
@@ -97,6 +109,7 @@ class EmployeeController extends Controller
         return response()->json([
             'message' => 'successfully updated',
             'employee data after update ' => $employee,
+            'project' => $employee->projects(),
         ],200);
     }
 
@@ -117,12 +130,10 @@ class EmployeeController extends Controller
         ],200);
     }
 
-    public function showDeletedEmployee()
+    public function showSoftDeleted()
     {
         $softDeletedEmployees = Employee::onlyTrashed()->get();
-    
-    return response()->json(['soft_deleted_employees' => $softDeletedEmployees]);
-
+        return response()->json(['soft_deleted_employees' => $softDeletedEmployees]);
     }
 
     public function restoreEmployee(string $id)
@@ -145,9 +156,12 @@ class EmployeeController extends Controller
     if (!$employee) {
         return response()->json(['message' => 'employee not found'], 404);
     }
-
-    $employee->forceDelete();
+    else{
+        $employee->projects()->detach();
+        $employee->forceDelete();
+        
+        return response()->json(['message' => 'employee permanently deleted']);
     
-    return response()->json(['message' => 'employee permanently deleted']);
-}
+    }
+  }
 }

@@ -33,30 +33,35 @@ Route::group(['middleware' => 'api'], function () {
      * @Route("department")
      */
     Route::apiResource('department', DepartmentController::class);
-    Route::prefix('department')->controller(DepartmentController::class)->group(function () {
-        Route::get('showdeleteddepatment', 'showDeletedDepatment');
-        Route::post('restore/{id}', 'restoreDepatment');
-        Route::delete('forcedelete', 'forceDeleteDepatment');
-    });
+    Route::get('softDeletedDepartment',[DepartmentController::class,'showDeletedDepartment']);
+    Route::post('restoreDepartment/{id}',[DepartmentController::class,'restoreDepatment']);
+    Route::delete('forcedeleteDepartment',[DepartmentController::class,'forceDeleteDepartment']);
+
 
     /**
      * @Route("employee")
      */
     Route::apiResource('employee', EmployeeController::class);
-    Route::prefix('employee')->controller(EmployeeController::class)->group(function () {
-        Route::get('showdeletedemployee', 'showDeletedEmployee');
-        Route::post('restore/{id}', 'restoreEmployee');
-        Route::delete('forcedelete', 'forceDeleteEmployee');
-    });
+    Route::get('softDeletedEmployee',[EmployeeController::class,'showSoftDeleted']);
+    Route::post('restoreEmployee/{id}',[EmployeeController::class,'restoreEmployee']);
+    Route::delete('forcedeleteEmployee/{id}',[EmployeeController::class,'forceDeleteEmployee']);
+
+
 
     /**
      * @Route("notes")
      */
-    Route::apiResource('note', NoteController::class)->except('store');
-    Route::prefix('note')->controller(NoteController::class)->group(function () {
-        Route::put('storeEmployeeNote/{employee}', 'employeeNoteStore');
-        Route::put('storeDepartmentNote{department}', 'departmentNoteStore');
-    });
+    Route::get('notes', [NoteController::class, 'index']);
+    Route::post('employeeStoreNote/{id}', [NoteController::class, 'employeeNoteStore']);
+    Route::post('departmentStoreNote/{id}', [NoteController::class, 'departmentNoteStore']);
+    Route::get('note/{id}', [NoteController::class, 'show']);
+    Route::put('noteUpdate/{id}', [NoteController::class, 'update']);
+    Route::delete('noteDelete/{id}', [NoteController::class, 'destroy']);
+    // Route::apiResource('note', NoteController::class)->except('store');
+    // Route::prefix('note')->controller(NoteController::class)->group(function () {
+    //     Route::put('storeEmployeeNote/{employee}', 'employeeNoteStore');
+    //     Route::put('storeDepartmentNote{department}', 'departmentNoteStore');
+    // });
 
     /**
      * @Route("projects")

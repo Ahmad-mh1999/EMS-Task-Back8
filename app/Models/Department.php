@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Note;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Department extends Model
 {
@@ -36,6 +37,6 @@ class Department extends Model
  */
     public function notes():MorphMany
     {
-        return $this->morphMany(Note::class, 'noteable');
+        return $this->MorphMany(Note::class, 'noteable');
     }
 }

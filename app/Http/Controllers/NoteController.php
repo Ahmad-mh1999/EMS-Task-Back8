@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DepartmentStoreRequest;
 use App\Http\Requests\DepartmentUpdateRequest;
+use App\Http\Requests\noteStoreRequest;
 use App\Models\Department;
 use App\Models\Employee;
-use Illuminate\Http\Request;
 use App\Models\Note;
 
 class NoteController extends Controller
@@ -31,20 +31,18 @@ class NoteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function departmentNoteStore(DepartmentStoreRequest $request)
+    public function departmentNoteStore(noteStoreRequest $request , Department $department)
     {
-        $department = Department::where('id', $request->department_id)->first();
         $note = $department->notes()->create([
-            'notes' => $request->note,
+            'note' => $request->note,
         ]);
         return response()->json([
             'message' => 'Created Successfully',
             'note' => $note
         ]);
     }
-    public function employeeNoteStore(Request $request)
+    public function employeeNoteStore(noteStoreRequest $request, Employee $employee)
     {
-        $employee = Employee::where('id', $request->employee_id)->first();
         $note = $employee->notes()->create([
             'notes' => $request->note,
         ]);
@@ -62,12 +60,16 @@ class NoteController extends Controller
         try {
 
             $Tnote -> note = $request->input('note') ?? $Tnote->note;
-            
+            // $Tnote->save();
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'some error occurred',
             ]);
         }
+        return response()->json([
+            'message' => 'Created Successfully',
+            'note' => $Tnote
+        ]);
     }
     
     /**
